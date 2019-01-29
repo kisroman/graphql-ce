@@ -1,0 +1,44 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Query {
+    compareProducts(customerToken: String, hashed_id: String): CompareProducts @resolver(class:
+    "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CompareProducts") @doc(description: "todo")
+}
+
+type CompareProducts {
+    items: [CompareItem] @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CompareProducts") @doc(description: "todo")
+}
+
+type CompareItem {
+    item_id: Int
+    product: ProductInterface
+}
+
+type Mutation {
+    addProductToCompare(customerToken: String, hashed_id: String, input: AddProductToCompareInput): AddProductToCompareOutput @resolver (class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\AddProductToCompare") @doc(description: "todo")
+    removeProductFromCompare(customerToken: String, hashed_id: String, input: RemoveProductFromCompareInput): RemoveProductFromCompareOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\RemoveProductFromCompare") @doc(description: "todo")
+    createCompareList: CreateCompareListOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CreateCompareList") @doc(description: "todo")
+}
+
+input AddProductToCompareInput {
+    ids: [Int!]
+}
+
+type AddProductToCompareOutput {
+    result: Boolean!
+    compareProducts: CompareProducts
+}
+
+input RemoveProductFromCompareInput {
+    ids: [Int!]
+}
+
+type RemoveProductFromCompareOutput {
+    result: Boolean!
+    compareProducts: CompareProducts
+}
+
+type CreateCompareListOutput {
+    hashed_id: String
+}
