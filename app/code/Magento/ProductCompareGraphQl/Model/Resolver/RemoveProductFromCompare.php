@@ -73,7 +73,7 @@ class RemoveProductFromCompare implements ResolverInterface
                 $listId = $this->hashedListIdToListId->execute($args['hashed_id']);
                 $item->setCatalogCompareListId($listId);
                 $item->loadByProduct($id);
-                if ($item->getId()) {
+                if ($item->getId() && $customerId === (int)$item->getCustomerId()) {
                     $item->delete();
                 }
             }

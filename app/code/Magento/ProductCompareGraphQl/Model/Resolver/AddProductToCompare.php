@@ -59,6 +59,8 @@ class AddProductToCompare implements ResolverInterface
             throw new GraphQlInputException(__('"hashed_id" value should be specified'));
         }
 
+        $context->setData('hashed_id', $args['hashed_id']);
+
         $result = ['result' => false, 'compareProducts' => []];
 
         if (!empty($args['input']['ids']) && is_array($args['input']['ids'])) {
@@ -74,7 +76,7 @@ class AddProductToCompare implements ResolverInterface
                 $item->setCatalogCompareListId($listId);
                 $item->loadByProduct($id);
 
-                if (!$item->getId()) {
+                if ($item->getId() && $customerId === (int)$item->getCustomerId()) {
                     $item->addProductData((int)$id);
                     $item->save();
                 }

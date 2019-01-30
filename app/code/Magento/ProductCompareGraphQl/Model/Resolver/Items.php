@@ -11,7 +11,6 @@ use Magento\Catalog\Model\CompareList\HashedListIdToListIdInterface;
 use Magento\Catalog\Model\Config;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Store\Model\StoreManagerInterface;
@@ -19,7 +18,7 @@ use Magento\Store\Model\StoreManagerInterface;
 /**
  * CompareProducts field resolver, used for GraphQL request processing.
  */
-class CompareProducts implements ResolverInterface
+class Items implements ResolverInterface
 {
     /**
      * @var CollectionFactory
@@ -64,12 +63,32 @@ class CompareProducts implements ResolverInterface
      */
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
-        if (!isset($args['hashed_id']) || !is_string($args['hashed_id'])) {
-            throw new GraphQlInputException(__('"hashed_id" value should be specified'));
+        $hashedId = $context->getData('hashed_id');
+
+        $collection = $this->collectionFactory->create();
+        $collection->useProductItem(true)->setStoreId($this->storeManager->getStore()->getId());
+        $collection->addAttributeToSelect($this->catalogConfig->getProductAttributes());
+        $collection->loadComparableAttributes();
+
+        $customerId = $context->getUserId();
+        $catalogCompareListId = $this->hashedListIdToListId->execute($hashedId);
+
+        if (0 !== $customerId && null !== $customerId) {
+            $collection->setCatalogCompareListIdAndCustomerId($catalogCompareListId, $customerId);
+        } else {
+            $collection->setCatalogCompareListId($catalogCompareListId);
         }
 
-        $context->setData('hashed_id', $args['hashed_id']);
+        $items = [];
+        foreach ($collection as $item) {
+            $productData = $item->getData();
+            $productData['model'] = $item;
+            $items[] = [
+                'item_id' => $item->getData('catalog_compare_item_id'),
+                'product' => $productData
+            ];
+        }
 
-        return [];
+        return $items;
     }
 }

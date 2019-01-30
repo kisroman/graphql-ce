@@ -2,12 +2,11 @@
 # See COPYING.txt for license details.
 
 type Query {
-    compareProducts(hashed_id: String): CompareProducts @resolver(class:
-    "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CompareProducts") @doc(description: "todo")
+    compareProducts(hashed_id: String): CompareProducts @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CompareProducts") @doc(description: "todo")
 }
 
 type CompareProducts {
-    items: [CompareItem] @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CompareProducts") @doc(description: "todo")
+    items: [CompareItem] @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\Items") @doc(description: "todo")
 }
 
 type CompareItem {
