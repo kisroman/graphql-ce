@@ -11,6 +11,8 @@ use Magento\Framework\Model\AbstractModel;
 /**
  * @method string getHashedId()
  * @method CompareList setHashedId()
+ * @method int getCustomerId()
+ * @method CompareList setCustomerId()
  */
 class CompareList extends AbstractModel
 {

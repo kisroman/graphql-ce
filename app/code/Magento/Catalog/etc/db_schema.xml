@@ -579,6 +579,8 @@
         <column xsi:type="int" name="list_id" padding="10" unsigned="true" nullable="false"
                 identity="true" comment="Compare List ID"/>
         <column xsi:type="varchar" name="hashed_id" nullable="true" length="32" comment="Hashed ID"/>
+        <column xsi:type="int" name="customer_id" padding="10" unsigned="true" nullable="true" identity="false"
+                comment="Customer ID"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="list_id"/>
         </constraint>
@@ -586,6 +588,10 @@
             <column name="list_id"/>
         </index>
         <index referenceId="CATALOG_COMPARE_LIST_HASHED_ID" indexType="btree">
+            <column name="hashed_id"/>
+        </index>
+        <index referenceId="CATALOG_COMPARE_LIST_CUSTOMER_ID_HASHED_ID" indexType="btree">
+            <column name="customer_id"/>
             <column name="hashed_id"/>
         </index>
     </table>

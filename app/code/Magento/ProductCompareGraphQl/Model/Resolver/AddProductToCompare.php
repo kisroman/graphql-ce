@@ -7,13 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\ProductCompareGraphQl\Model\Resolver;
 
+use Magento\Catalog\Model\CompareList\HashedListIdToListIdInterface;
 use Magento\Catalog\Model\Product\Compare\ItemFactory;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\ProductCompareGraphQl\Model\DataProvider\CompareProducts as CompareProductsDataProvider;
-use Magento\ProductCompareGraphQl\Model\FilterManagement;
 
 /**
  * Resolver for Add Product to Compare List mutation.
@@ -26,28 +25,20 @@ class AddProductToCompare implements ResolverInterface
     private $compareItemFactory;
 
     /**
-     * @var FilterManagement
+     * @var HashedListIdToListIdInterface
      */
-    private $filterManagement;
+    private $hashedListIdToListId;
 
     /**
-     * @var CompareProductsDataProvider
-     */
-    private $compareProductsDataProvider;
-
-    /**
-     * @param FilterManagement $filterManagement
      * @param ItemFactory $compareItemFactory
-     * @param CompareProductsDataProvider $compareProductsDataProvider
+     * @param HashedListIdToListIdInterface $hashedListIdToListId
      */
     public function __construct(
-        FilterManagement $filterManagement,
         ItemFactory $compareItemFactory,
-        CompareProductsDataProvider $compareProductsDataProvider
+        HashedListIdToListIdInterface $hashedListIdToListId
     ) {
-        $this->filterManagement = $filterManagement;
         $this->compareItemFactory = $compareItemFactory;
-        $this->compareProductsDataProvider = $compareProductsDataProvider;
+        $this->hashedListIdToListId = $hashedListIdToListId;
     }
 
     /**
@@ -63,41 +54,33 @@ class AddProductToCompare implements ResolverInterface
         if (!isset($args['input']) || !is_array($args['input']) || empty($args['input'])) {
             throw new GraphQlInputException(__('"input" value should be specified'));
         }
-        if (!isset($args['customerToken']) && !isset($args['hashed_id'])) {
-            throw new GraphQlInputException(__('"customerToken" or "hashed_id" value should be specified'));
-        } elseif (isset($args['customerToken']) && isset($args['hashed_id'])) {
-            throw new GraphQlInputException(__('Only "customerToken" or only "hashed_id" value should be specified'));
+
+        if (!isset($args['hashed_id']) || !is_string($args['hashed_id'])) {
+            throw new GraphQlInputException(__('"hashed_id" value should be specified'));
         }
 
         $result = ['result' => false, 'compareProducts' => []];
 
         if (!empty($args['input']['ids']) && is_array($args['input']['ids'])) {
+            $customerId = $context->getUserId();
+
             foreach ($args['input']['ids'] as $id) {
                 $item = $this->compareItemFactory->create();
-                if (isset($args['customerToken'])) {
-                    $item = $this->filterManagement->addCustomerIdToItem($item, $args['customerToken']);
-                } elseif (isset($args['hashed_id'])) {
-                    $item = $this->filterManagement->addHashIdToItem($item, $args['hashed_id']);
+                if (0 !== $customerId && null !== $customerId) {
+                    $item->setCustomerId($customerId);
                 }
+
+                $listId = $this->hashedListIdToListId->execute($args['hashed_id']);
+                $item->setCatalogCompareListId($listId);
                 $item->loadByProduct($id);
+
                 if (!$item->getId()) {
                     $item->addProductData((int)$id);
                     $item->save();
                 }
             }
-            if (isset($args['customerToken'])) {
-                $result = [
-                    'result' => true,
-                    'compareProducts' => ['items' =>
-                        $this->compareProductsDataProvider->getFilteredByCustomer($args['customerToken'])
-                        ]
-                ];
-            } else {
-                $result = [
-                    'result' => true,
-                    'compareProducts' => []
-                ];
-            }
+
+            $result = ['result' => true, 'compareProducts' => []];
         }
 
         return $result;

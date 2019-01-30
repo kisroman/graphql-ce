@@ -2,7 +2,7 @@
 # See COPYING.txt for license details.
 
 type Query {
-    compareProducts(customerToken: String, hashed_id: String): CompareProducts @resolver(class:
+    compareProducts(hashed_id: String): CompareProducts @resolver(class:
     "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CompareProducts") @doc(description: "todo")
 }
 
@@ -16,8 +16,8 @@ type CompareItem {
 }
 
 type Mutation {
-    addProductToCompare(customerToken: String, hashed_id: String, input: AddProductToCompareInput): AddProductToCompareOutput @resolver (class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\AddProductToCompare") @doc(description: "todo")
-    removeProductFromCompare(customerToken: String, hashed_id: String, input: RemoveProductFromCompareInput): RemoveProductFromCompareOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\RemoveProductFromCompare") @doc(description: "todo")
+    addProductToCompare(hashed_id: String, input: AddProductToCompareInput): AddProductToCompareOutput @resolver (class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\AddProductToCompare") @doc(description: "todo")
+    removeProductFromCompare(hashed_id: String, input: RemoveProductFromCompareInput): RemoveProductFromCompareOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\RemoveProductFromCompare") @doc(description: "todo")
     createCompareList: CreateCompareListOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CreateCompareList") @doc(description: "todo")
 }
 

@@ -45,7 +45,13 @@ class CreateCompareList implements ResolverInterface
      */
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
+        $customerId = $context->getUserId();
         $compareList = $this->compareListFactory->create();
+
+        if (0 !== $customerId && null !== $customerId) {
+            $compareList->setCustomerId($customerId);
+        }
+
         $compareList->setHashedId($this->randomDataGenerator->getUniqueHash())->save();
 
         return ['hashed_id' => $compareList->getHashedId()];
