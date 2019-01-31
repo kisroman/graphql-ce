@@ -2,11 +2,11 @@
 # See COPYING.txt for license details.
 
 type Query {
-    compareProducts(hashed_id: String): CompareProducts @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CompareProducts") @doc(description: "todo")
+    compareProductsList(hashed_id: String): CompareProductsList @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CompareProductsList") @doc(description: "todo")
 }
 
-type CompareProducts {
-    items: [CompareItem] @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\Items") @doc(description: "todo")
+type CompareProductsList {
+    items: [CompareItem] @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\GetCompareListItems") @doc(description: "todo")
 }
 
 type CompareItem {
@@ -15,27 +15,27 @@ type CompareItem {
 }
 
 type Mutation {
-    addProductToCompare(hashed_id: String, input: AddProductToCompareInput): AddProductToCompareOutput @resolver (class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\AddProductToCompare") @doc(description: "todo")
-    removeProductFromCompare(hashed_id: String, input: RemoveProductFromCompareInput): RemoveProductFromCompareOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\RemoveProductFromCompare") @doc(description: "todo")
+    addProductToCompareList(hashed_id: String, input: addProductToCompareListInput): addProductToCompareListOutput @resolver (class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\addProductToCompareList") @doc(description: "todo")
+    removeProductFromCompareList(hashed_id: String, input: removeProductFromCompareListInput): removeProductFromCompareListOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\removeProductFromCompareList") @doc(description: "todo")
     createCompareList: CreateCompareListOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CreateCompareList") @doc(description: "todo")
 }
 
-input AddProductToCompareInput {
+input addProductToCompareListInput {
     ids: [Int!]
 }
 
-type AddProductToCompareOutput {
+type addProductToCompareListOutput {
     result: Boolean!
-    compareProducts: CompareProducts
+    compareProductsList: CompareProductsList
 }
 
-input RemoveProductFromCompareInput {
+input removeProductFromCompareListInput {
     ids: [Int!]
 }
 
-type RemoveProductFromCompareOutput {
+type removeProductFromCompareListOutput {
     result: Boolean!
-    compareProducts: CompareProducts
+    compareProductsList: CompareProductsList
 }
 
 type CreateCompareListOutput {

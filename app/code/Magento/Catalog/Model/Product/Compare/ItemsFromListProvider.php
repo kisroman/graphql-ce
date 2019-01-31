@@ -3,22 +3,16 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
-namespace Magento\ProductCompareGraphQl\Model\Resolver;
+namespace Magento\Catalog\Model\Product\Compare;
 
 use Magento\Catalog\Model\CompareList\HashedListIdToListIdInterface;
 use Magento\Catalog\Model\Config;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory;
-use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Query\ResolverInterface;
-use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Store\Model\StoreManagerInterface;
 
-/**
- * CompareProducts field resolver, used for GraphQL request processing.
- */
-class Items implements ResolverInterface
+
+class ItemsFromListProvider
 {
     /**
      * @var CollectionFactory
@@ -59,21 +53,19 @@ class Items implements ResolverInterface
     }
 
     /**
-     * @inheritdoc
+     * @param int $customerId
+     * @param string $hashedId
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function get(int $customerId, string $hashedId)
     {
-        $hashedId = $context->getData('hashed_id');
-
         $collection = $this->collectionFactory->create();
         $collection->useProductItem(true)->setStoreId($this->storeManager->getStore()->getId());
         $collection->addAttributeToSelect($this->catalogConfig->getProductAttributes());
         $collection->loadComparableAttributes();
 
-        $customerId = $context->getUserId();
         $catalogCompareListId = $this->hashedListIdToListId->execute($hashedId);
 
-        if (0 !== $customerId && null !== $customerId) {
+        if (0 !== $customerId) {
             $collection->setCatalogCompareListIdAndCustomerId($catalogCompareListId, $customerId);
         } else {
             $collection->setCatalogCompareListId($catalogCompareListId);

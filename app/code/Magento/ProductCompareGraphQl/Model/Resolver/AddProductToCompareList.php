@@ -7,8 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ProductCompareGraphQl\Model\Resolver;
 
-use Magento\Catalog\Model\CompareList\HashedListIdToListIdInterface;
-use Magento\Catalog\Model\Product\Compare\ItemFactory;
+use Magento\Catalog\Model\Product\Compare\AddToList;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
@@ -17,28 +16,20 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 /**
  * Resolver for Add Product to Compare List mutation.
  */
-class AddProductToCompare implements ResolverInterface
+class AddProductToCompareList implements ResolverInterface
 {
     /**
-     * @var ItemFactory
+     * @var AddToList
      */
-    private $compareItemFactory;
+    private $addToList;
 
     /**
-     * @var HashedListIdToListIdInterface
-     */
-    private $hashedListIdToListId;
-
-    /**
-     * @param ItemFactory $compareItemFactory
-     * @param HashedListIdToListIdInterface $hashedListIdToListId
+     * @param AddToList $addToList
      */
     public function __construct(
-        ItemFactory $compareItemFactory,
-        HashedListIdToListIdInterface $hashedListIdToListId
+        AddToList $addToList
     ) {
-        $this->compareItemFactory = $compareItemFactory;
-        $this->hashedListIdToListId = $hashedListIdToListId;
+        $this->addToList = $addToList;
     }
 
     /**
@@ -60,29 +51,16 @@ class AddProductToCompare implements ResolverInterface
         }
 
         $context->setData('hashed_id', $args['hashed_id']);
-
         $result = ['result' => false, 'compareProducts' => []];
 
         if (!empty($args['input']['ids']) && is_array($args['input']['ids'])) {
             $customerId = $context->getUserId();
 
             foreach ($args['input']['ids'] as $id) {
-                $item = $this->compareItemFactory->create();
-                if (0 !== $customerId && null !== $customerId) {
-                    $item->setCustomerId($customerId);
-                }
-
-                $listId = $this->hashedListIdToListId->execute($args['hashed_id']);
-                $item->setCatalogCompareListId($listId);
-                $item->loadByProduct($id);
-
-                if ($item->getId() && $customerId === (int)$item->getCustomerId()) {
-                    $item->addProductData((int)$id);
-                    $item->save();
-                }
+                $this->addToList->execute($customerId, $args['hashed_id'], (int)$id);
             }
 
-            $result = ['result' => true, 'compareProducts' => []];
+            $result = ['result' => true, 'compareProductsList' => []];
         }
 
         return $result;

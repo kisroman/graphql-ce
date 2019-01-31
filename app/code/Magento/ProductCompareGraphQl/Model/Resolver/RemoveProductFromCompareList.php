@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\ProductCompareGraphQl\Model\Resolver;
 
 use Magento\Catalog\Model\CompareList\HashedListIdToListIdInterface;
+use Magento\Catalog\Model\Product\Compare\RemoveFromList;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
@@ -17,28 +18,19 @@ use Magento\Catalog\Model\Product\Compare\ItemFactory;
 /**
  * Resolver for Remove Product(products) from Compare List.
  */
-class RemoveProductFromCompare implements ResolverInterface
+class RemoveProductFromCompareList implements ResolverInterface
 {
     /**
-     * @var ItemFactory
+     * @var RemoveFromList
      */
-    private $compareItemFactory;
+    private $removeFromList;
 
     /**
-     * @var HashedListIdToListIdInterface
+     * @param RemoveFromList $removeFromList
      */
-    private $hashedListIdToListId;
-
-    /**
-     * @param ItemFactory $compareItemFactory
-     * @param HashedListIdToListIdInterface $hashedListIdToListId
-     */
-    public function __construct(
-        ItemFactory $compareItemFactory,
-        HashedListIdToListIdInterface $hashedListIdToListId
-    ) {
-        $this->compareItemFactory = $compareItemFactory;
-        $this->hashedListIdToListId = $hashedListIdToListId;
+    public function __construct(RemoveFromList $removeFromList)
+    {
+        $this->removeFromList = $removeFromList;
     }
 
     /**
@@ -59,26 +51,17 @@ class RemoveProductFromCompare implements ResolverInterface
             throw new GraphQlInputException(__('"hashed_id" value should be specified'));
         }
 
+        $context->setData('hashed_id', $args['hashed_id']);
         $result = ['result' => false, "compareProducts" => []];
 
         if (!empty($args['input']['ids']) && is_array($args['input']['ids'])) {
             $customerId = $context->getUserId();
 
             foreach ($args['input']['ids'] as $id) {
-                $item = $this->compareItemFactory->create();
-                if (0 !== $customerId && null !== $customerId) {
-                    $item->setCustomerId($customerId);
-                }
-
-                $listId = $this->hashedListIdToListId->execute($args['hashed_id']);
-                $item->setCatalogCompareListId($listId);
-                $item->loadByProduct($id);
-                if ($item->getId() && $customerId === (int)$item->getCustomerId()) {
-                    $item->delete();
-                }
+                $this->removeFromList->execute($customerId, $args['hashed_id'], (int)$id);
             }
 
-            $result = ['result' => true, "compareProducts" => []];
+            $result = ['result' => true, "compareProductsList" => []];
         }
 
         return $result;

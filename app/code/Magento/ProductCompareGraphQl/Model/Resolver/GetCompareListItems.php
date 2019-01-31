@@ -7,28 +7,27 @@ declare(strict_types=1);
 
 namespace Magento\ProductCompareGraphQl\Model\Resolver;
 
-use Magento\Catalog\Model\Product\Compare\CreateList;
+use Magento\Catalog\Model\Product\Compare\ItemsFromListProvider;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 
 /**
- * Create new compare list.
+ * CompareProducts field resolver.
  */
-class CreateCompareList implements ResolverInterface
+class GetCompareListItems implements ResolverInterface
 {
     /**
-     * @var CreateList
+     * @var ItemsFromListProvider
      */
-    private $createList;
+    private $itemsFromListProvider;
 
     /**
-     * @param CreateList $createList
+     * @param ItemsFromListProvider $itemsFromListProvider
      */
-    public function __construct(
-        CreateList $createList
-    ) {
-        $this->createList = $createList;
+    public function __construct(ItemsFromListProvider $itemsFromListProvider)
+    {
+        $this->itemsFromListProvider = $itemsFromListProvider;
     }
 
     /**
@@ -36,10 +35,8 @@ class CreateCompareList implements ResolverInterface
      */
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
-        $customerId = $context->getUserId();
+        $items = $this->itemsFromListProvider->get($context->getUserId(), $context->getData('hashed_id'));
 
-        $compareList = $this->createList->execute($customerId);
-
-        return ['hashed_id' => $compareList->getHashedId()];
+        return $items;
     }
 }
