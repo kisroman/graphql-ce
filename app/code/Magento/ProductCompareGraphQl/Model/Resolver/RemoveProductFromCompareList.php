@@ -7,13 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\ProductCompareGraphQl\Model\Resolver;
 
-use Magento\Catalog\Model\CompareList\HashedListIdToListIdInterface;
 use Magento\Catalog\Model\Product\Compare\RemoveFromList;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\Catalog\Model\Product\Compare\ItemFactory;
 
 /**
  * Resolver for Remove Product(products) from Compare List.
