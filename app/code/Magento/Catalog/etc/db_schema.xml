@@ -546,7 +546,6 @@
                 identity="false" default="0" comment="List ID"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="catalog_compare_item_id"/>
-            <column name="catalog_compare_list_id"/>
         </constraint>
         <constraint xsi:type="foreign" referenceId="CATALOG_COMPARE_ITEM_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID"
                     table="catalog_compare_item" column="customer_id" referenceTable="customer_entity"
@@ -556,10 +555,6 @@
                     referenceColumn="entity_id" onDelete="CASCADE"/>
         <constraint xsi:type="foreign" referenceId="CATALOG_COMPARE_ITEM_STORE_ID_STORE_STORE_ID" table="catalog_compare_item"
                     column="store_id" referenceTable="store" referenceColumn="store_id" onDelete="SET NULL"/>
-        <constraint xsi:type="foreign"
-                    referenceId="CATALOG_COMPARE_ITEM_CATALOG_COMPARE_LIST_ID_CATALOG_COMPARE_LIST_LIST_ID"
-                    table="catalog_compare_item" column="catalog_compare_list_id" referenceTable="catalog_compare_list"
-                    referenceColumn="list_id" onDelete="CASCADE"/>
         <index referenceId="CATALOG_COMPARE_ITEM_PRODUCT_ID" indexType="btree">
             <column name="product_id"/>
         </index>
