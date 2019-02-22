@@ -15,8 +15,8 @@ type CompareItem {
 }
 
 type Mutation {
-    addProductToCompareList(hashed_id: String, input: addProductToCompareListInput): addProductToCompareListOutput @resolver (class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\addProductToCompareList") @doc(description: "Add product to compare list")
-    removeProductFromCompareList(hashed_id: String, input: removeProductFromCompareListInput): removeProductFromCompareListOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\removeProductFromCompareList") @doc(description: "Remove product from compare list")
+    addProductToCompareList(hashed_id: String, input: addProductToCompareListInput): addProductToCompareListOutput @resolver (class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\AddProductToCompareList") @doc(description: "Add product to compare list")
+    removeProductFromCompareList(hashed_id: String, input: removeProductFromCompareListInput): removeProductFromCompareListOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\RemoveProductFromCompareList") @doc(description: "Remove product from compare list")
     createCompareList: CreateCompareListOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CreateCompareList") @doc(description: "Create compare list to add product to this list")
 }
 
