@@ -517,7 +517,7 @@ mutation {
             company: "Magento"
             street: ["test street 1", "test street 2"]
             city: "Montgomery"
-            region: "AL"
+            region_code: "AL"
             postcode: "36043"
             country_code: "US"
             telephone: "88776655"

@@ -105,7 +105,8 @@ input CartAddressInput {
     company: String
     street: [String!]!
     city: String!
-    region: String
+    region: String @doc(description: "Deprecated, use region_code instead")
+    region_code: String
     postcode: String
     country_code: String!
     telephone: String!

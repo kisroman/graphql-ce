@@ -66,6 +66,7 @@ class QuoteAddressFactory
             $addressInput['country_id'] = $addressInput['country_code'];
         }
 
+        /** use of region field is deprecated, but this is needed to avoid error if region field is used */
         if (isset($addressInput['region'])) {
             $addressInput['region_code'] = $addressInput['region'];
         }

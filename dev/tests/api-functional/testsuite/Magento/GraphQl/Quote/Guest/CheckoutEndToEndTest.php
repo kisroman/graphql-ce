@@ -217,7 +217,7 @@ mutation {
           city: "test city"
           postcode: "887766"
           telephone: "88776655"
-          region: "TX"
+          region_code: "TX"
           country_code: "US"
           save_in_address_book: false
          }
@@ -254,7 +254,7 @@ mutation {
             company: "test company"
             street: ["test street 1", "test street 2"]
             city: "test city"
-            region: "TX"
+            region_code: "TX"
             postcode: "887766"
             country_code: "US"
             telephone: "88776655"
